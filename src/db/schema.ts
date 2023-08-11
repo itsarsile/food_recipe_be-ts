@@ -7,7 +7,7 @@ export const factorStatus = pgEnum("factor_status", ['verified', 'unverified'])
 export const aalLevel = pgEnum("aal_level", ['aal3', 'aal2', 'aal1'])
 export const codeChallengeMethod = pgEnum("code_challenge_method", ['plain', 's256'])
 
-import { sql } from "drizzle-orm"
+import { InferModel, sql } from "drizzle-orm"
 
 export const prismaMigrations = pgTable("_prisma_migrations", {
 	id: varchar("id", { length: 36 }).primaryKey().notNull(),
@@ -33,3 +33,4 @@ export const user = pgTable("User", {
 		emailKey: uniqueIndex("User_email_key").on(table.email),
 	}
 });
+
