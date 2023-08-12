@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsnd --respawn src/index.ts",
-    "introspect": "drizzle-kit introspect:pg"
+    "introspect": "drizzle-kit introspect:pg",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
