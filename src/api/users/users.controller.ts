@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { createUser, getAllUsers } from "./users.service";
+import { findUniqueUserByEmail, getAllUsers } from "./users.service";
 
 export const getUsersHandler = async (
   req: Request,
@@ -17,24 +17,22 @@ export const getUsersHandler = async (
   }
 };
 
-export const createUserHandler = async (
+
+export const findUserByEmail = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { name, email, password, phone } = req.body;
-
-  console.log(name, email, password, phone);
+  const { email } = req.params;
   try {
-    const createdUser = await createUser({ name, email, password, phone });
-    return res
-      .status(201)
-      .json({ message: "User created successfully", createdUser });
-  } catch (error) {
-    next(error);
-  }
-};
+    const user = await findUniqueUserByEmail(email)
 
-export const healthCheck = async (req: Request, res: Response) => {
-  res.json({ message: "OK" });
-};
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json(user)
+  } catch (error) {
+    next(error)
+  }
+}

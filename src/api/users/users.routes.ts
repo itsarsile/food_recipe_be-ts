@@ -1,15 +1,13 @@
 import express from "express";
 import {
-  createUserHandler,
   getUsersHandler,
-  healthCheck,
 } from "./users.controller";
+import passport from "passport";
 
 const router = express.Router();
 
 router
-  .get("/health", healthCheck)
-  .get("/", getUsersHandler)
-  .post("/register", createUserHandler);
+  .get("/", passport.authenticate('jwt', { session: false }), getUsersHandler)
+  .get("/:id")
 
 export default router;
