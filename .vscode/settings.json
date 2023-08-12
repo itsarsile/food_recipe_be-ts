@@ -1,6 +1,7 @@
 {
     "conventionalCommits.scopes": [
         "API",
-        "Auth API"
+        "Auth API",
+        "Deploy"
     ]
 }

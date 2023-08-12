@@ -154,7 +154,6 @@ function logout(res: Response) {
 
 export const logoutUserHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = res.locals.user
     await redisClient.del(res.locals.user.id.toString());
     logout(res)
     res.status(200).json({
