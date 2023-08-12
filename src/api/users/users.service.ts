@@ -7,7 +7,7 @@ import redisClient from "../../lib/redisClient";
 import { signJwt } from "../../lib/jwt";
 import c from "config";
 
-const excludedData = ["password"];
+export const excludedData = ["password"];
 
 export const getAllUsers = async () => {
   return await db.select().from(user);

@@ -38,7 +38,6 @@ export const registerHandler = async (
 ) => {
   const { name, email, password, phone } = req.body;
 
-  console.log({ name, email, password, phone });
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -142,6 +141,24 @@ export const refreshTokenHandler = async (
 
     res.status(200).json({ status: 'success', accessToken})
 
+  } catch (error) {
+    next(error)
+  }
+}
+
+function logout(res: Response) {
+  res.cookie('accessToken', '', { maxAge: -1 })
+  res.cookie('refreshToken', '', { maxAge: -1 })
+  res.cookie('logged_in', '', { maxAge: -1 })
+}
+
+export const logoutUserHandler = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await redisClient.del(res.locals.user.id.toString());
+    logout(res)
+    res.status(200).json({
+      message: "Logged out"
+    })
   } catch (error) {
     next(error)
   }

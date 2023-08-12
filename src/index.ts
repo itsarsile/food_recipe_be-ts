@@ -1,10 +1,8 @@
 import express, { Express, Request, Response } from "express";
-import c from 'config'
 import routes from "./routes";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import bodyParser = require("body-parser");
-import configurePassport from "./passport.config";
 
 dotenv.config();
 
@@ -14,7 +12,6 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(configurePassport.initialize());
 
 app.use("/", routes);
 

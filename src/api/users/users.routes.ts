@@ -1,13 +1,15 @@
 import express from "express";
-import {
-  getUsersHandler,
-} from "./users.controller";
-import passport from "passport";
+import { getMeHandler, getUsersHandler } from "./users.controller";
+import { deserializeUser } from "../../middlewares/deserializeUser";
+import { requireUser } from "../../middlewares/requireUser";
 
 const router = express.Router();
 
+router.use(deserializeUser, requireUser);
+
 router
-  .get("/", passport.authenticate('jwt', { session: false }), getUsersHandler)
-  .get("/:id")
+  .get("/me", getMeHandler)
+  .get("/", getUsersHandler)
+  .get("/:id");
 
 export default router;
