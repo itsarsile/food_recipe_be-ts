@@ -4,8 +4,13 @@ import * as dotenv from "dotenv";
 import { CookieOptions, NextFunction, Request, Response } from "express";
 import { signJwt, verifyJwt } from "../../lib/jwt";
 import redisClient from "../../lib/redisClient";
-import { findUniqueUserByEmail, findUniqueUserById, signTokens } from "../users/users.service";
+import {
+  findUniqueUserByEmail,
+  findUniqueUserById,
+  signTokens,
+} from "../users/users.service";
 import { createUser } from "./auth.service";
+import { omit } from "lodash";
 dotenv.config();
 
 const cookiesOptions: CookieOptions = {
@@ -37,7 +42,6 @@ export const registerHandler = async (
   next: NextFunction
 ) => {
   const { name, email, password, phone } = req.body;
-
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -73,7 +77,6 @@ export const loginHandler = async (
     const passwordMatch = await bcrypt.compare(password, user[0].password);
 
     if (passwordMatch) {
-
       const { accessToken, refreshToken } = await signTokens(user[0]);
       res.cookie("accessToken", accessToken, accessTokenCookieOptions);
       res.cookie("refreshToken", refreshToken, refreshTokenCookieOptions);
@@ -84,6 +87,7 @@ export const loginHandler = async (
 
       return res.status(200).json({
         status: "success",
+        user: omit(user[0], "password"),
         accessToken,
       });
     }
@@ -94,72 +98,73 @@ export const loginHandler = async (
   }
 };
 
-
 export const refreshTokenHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const refreshToken = req.cookies.refreshToken
-    const message = 'Could not refresh token'
+    const refreshToken = req.cookies.refreshToken;
+    const message = "Could not refresh token";
 
     if (!refreshToken) {
-      return next(message)
+      return next(message);
     }
-    const decoded = verifyJwt<{sub: string}>(
-      refreshToken,
-    )
+    const decoded = verifyJwt<{ sub: string }>(refreshToken);
 
     if (!decoded) {
-      return next(message)
+      return next(message);
     }
 
-    const session = await redisClient.get(decoded.sub.toString())
+    const session = await redisClient.get(decoded.sub.toString());
 
     if (!session) {
-      return next(message)
+      return next(message);
     }
 
-    
-
-    const user = await findUniqueUserById(JSON.parse(session).id)
+    const user = await findUniqueUserById(JSON.parse(session).id);
 
     if (!user) {
-      next(message)
+      next(message);
     }
 
-    const accessToken = signJwt({ sub: user[0].id }, {
-      expiresIn: `${c.get<number>('accessTokenExpiresIn')}m`
-    })
+    const accessToken = signJwt(
+      { sub: user[0].id },
+      {
+        expiresIn: `${c.get<number>("accessTokenExpiresIn")}m`,
+      }
+    );
 
-    res.cookie('accessToken', accessToken, accessTokenCookieOptions)
-    res.cookie('logged_in', true, {
+    res.cookie("accessToken", accessToken, accessTokenCookieOptions);
+    res.cookie("logged_in", true, {
       ...accessTokenCookieOptions,
       httpOnly: false,
-    })
+    });
 
-    res.status(200).json({ status: 'success', accessToken})
-
+    res.status(200).json({ status: "success", accessToken });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 function logout(res: Response) {
-  res.cookie('accessToken', '', { maxAge: -1 })
-  res.cookie('refreshToken', '', { maxAge: -1 })
-  res.cookie('logged_in', '', { maxAge: -1 })
+  res.cookie("accessToken", "", { maxAge: -1 });
+  res.cookie("refreshToken", "", { maxAge: -1 });
+  res.cookie("logged_in", "", { maxAge: -1 });
 }
 
-export const logoutUserHandler = async (req: Request, res: Response, next: NextFunction) => {
+export const logoutUserHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     await redisClient.del(res.locals.user.id.toString());
-    logout(res)
+    logout(res);
     res.status(200).json({
-      message: "Logged out"
-    })
+      message: "Logged out",
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};

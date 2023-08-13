@@ -11,10 +11,59 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
+  id       Int        @id @default(autoincrement())
   name     String
-  email    String  @unique
+  email    String     @unique
   avatar   String?
   phone    String?
   password String
+  recipes  Recipe[]
+  comments Comments[]
+  saved    Save[]
+  liked    Like[]
+}
+
+model Recipe {
+  id          Int        @id @default(autoincrement())
+  title       String?
+  photo       String?
+  description String?
+  author      User       @relation(fields: [authorId], references: [id]) // Establishing the reverse relationship
+  authorId    Int
+  Comments    Comments[]
+  likedBy     Like[]
+  savedBy     Save[]
+  videos      Video[]
+}
+
+model Comments {
+  id       Int     @id @default(autoincrement())
+  text     String?
+  recipe   Recipe  @relation(fields: [recipeId], references: [id])
+  recipeId Int
+  author   User    @relation(fields: [authorId], references: [id]) // Establishing relationship with User model
+  authorId Int
+}
+
+model Like {
+  id       Int    @id @default(autoincrement())
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
+  recipeId Int
+  user     User   @relation(fields: [userId], references: [id])
+  userId   Int
+}
+
+model Save {
+  id       Int    @id @default(autoincrement())
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
+  recipeId Int
+  user     User   @relation(fields: [userId], references: [id])
+  userId   Int
+}
+
+model Video {
+  id       Int    @id @default(autoincrement())
+  url      String
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
+  recipeId Int
 }

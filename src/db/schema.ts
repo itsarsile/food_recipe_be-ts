@@ -1,4 +1,4 @@
-import { pgTable, pgEnum, pgSchema, AnyPgColumn, varchar, timestamp, text, integer, uniqueIndex, serial } from "drizzle-orm/pg-core"
+import { pgTable, pgEnum, pgSchema, AnyPgColumn, varchar, timestamp, text, integer, uniqueIndex, serial, foreignKey } from "drizzle-orm/pg-core"
 
 export const keyStatus = pgEnum("key_status", ['expired', 'invalid', 'valid', 'default'])
 export const keyType = pgEnum("key_type", ['stream_xchacha20', 'secretstream', 'secretbox', 'kdf', 'generichash', 'shorthash', 'auth', 'hmacsha256', 'hmacsha512', 'aead-det', 'aead-ietf'])
@@ -7,7 +7,7 @@ export const factorStatus = pgEnum("factor_status", ['verified', 'unverified'])
 export const aalLevel = pgEnum("aal_level", ['aal3', 'aal2', 'aal1'])
 export const codeChallengeMethod = pgEnum("code_challenge_method", ['plain', 's256'])
 
-import { InferModel, sql } from "drizzle-orm"
+import { sql } from "drizzle-orm"
 
 export const prismaMigrations = pgTable("_prisma_migrations", {
 	id: varchar("id", { length: 36 }).primaryKey().notNull(),
@@ -34,3 +34,35 @@ export const user = pgTable("User", {
 	}
 });
 
+export const recipe = pgTable("Recipe", {
+	id: serial("id").primaryKey().notNull(),
+	title: text("title"),
+	photo: text("photo"),
+	description: text("description"),
+	authorId: integer("authorId").notNull().references(() => user.id, { onDelete: "restrict", onUpdate: "cascade" } ),
+});
+
+export const comments = pgTable("Comments", {
+	id: serial("id").primaryKey().notNull(),
+	text: text("text"),
+	recipeId: integer("recipeId").notNull().references(() => recipe.id, { onDelete: "restrict", onUpdate: "cascade" } ),
+	authorId: integer("authorId").notNull().references(() => user.id, { onDelete: "restrict", onUpdate: "cascade" } ),
+});
+
+export const like = pgTable("Like", {
+	id: serial("id").primaryKey().notNull(),
+	recipeId: integer("recipeId").notNull().references(() => recipe.id, { onDelete: "restrict", onUpdate: "cascade" } ),
+	userId: integer("userId").notNull().references(() => user.id, { onDelete: "restrict", onUpdate: "cascade" } ),
+});
+
+export const save = pgTable("Save", {
+	id: serial("id").primaryKey().notNull(),
+	recipeId: integer("recipeId").notNull().references(() => recipe.id, { onDelete: "restrict", onUpdate: "cascade" } ),
+	userId: integer("userId").notNull().references(() => user.id, { onDelete: "restrict", onUpdate: "cascade" } ),
+});
+
+export const video = pgTable("Video", {
+	id: serial("id").primaryKey().notNull(),
+	url: text("url").notNull(),
+	recipeId: integer("recipeId").notNull().references(() => recipe.id, { onDelete: "restrict", onUpdate: "cascade" } ),
+});

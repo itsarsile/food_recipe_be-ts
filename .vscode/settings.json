@@ -2,6 +2,8 @@
     "conventionalCommits.scopes": [
         "API",
         "Auth API",
-        "Deploy"
-    ]
+        "Deploy",
+        "Recipes API"
+    ],
+    "discord.enabled": true
 }
