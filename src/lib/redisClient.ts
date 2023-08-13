@@ -17,7 +17,10 @@ const connectRedis = async () => {
   }
 };
 
+redisClient.on("error", (error) => {
+  console.error(error);
+});
 
-connectRedis()
+connectRedis();
 
 export default redisClient;
