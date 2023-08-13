@@ -2,7 +2,6 @@
   "name": "food_recipe-be-ts",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsnd --respawn src/index.ts",
