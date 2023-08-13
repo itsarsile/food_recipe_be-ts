@@ -9,29 +9,34 @@ export const getUsersHandler = async (
 ) => {
   try {
     const user = await getAllUsers();
+    console.log(user);
     if (user.length === 0) {
       return res.status(404).json({ message: "User not found" });
     }
+
     return res.status(200).json(user);
   } catch (error) {
     next(error);
   }
 };
 
-
-export const getMeHandler = async (req: Request, res: Response, next: NextFunction) => {
+export const getMeHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const user = res.locals.user;
     res.status(200).json({
-      status: 'success',
+      status: "success",
       data: {
-        user
+        user,
       },
-    })
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const findUserByEmail = async (
   req: Request,
@@ -40,14 +45,14 @@ export const findUserByEmail = async (
 ) => {
   const { email } = req.params;
   try {
-    const user = await findUniqueUserByEmail(email)
+    const user = await findUniqueUserByEmail(email);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    return res.status(200).json(user)
+    return res.status(200).json(user);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
