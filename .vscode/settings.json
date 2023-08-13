@@ -3,5 +3,6 @@
         "API",
         "Auth API",
         "Deploy"
-    ]
+    ],
+    "discord.enabled": true
 }
