@@ -6,6 +6,7 @@ import {
   deleteRecipeByIdHandler,
   getAllRecipesHandler,
   getRecipeByIdHandler,
+  getRecipesByUserIdHandler,
   updateRecipeHandler,
 } from "./recipes.controller";
 
@@ -15,6 +16,7 @@ router.use(deserializeUser, requireUser);
 router
   .get("/", getAllRecipesHandler)
   .get("/:id", getRecipeByIdHandler)
+  .get("/author/:id", getRecipesByUserIdHandler)
   .post("/", createRecipeHandler)
   .delete("/:id", deleteRecipeByIdHandler)
   .put("/:id", updateRecipeHandler);

@@ -4,6 +4,7 @@ import {
   deleteRecipeById,
   getAllRecipes,
   getRecipeById,
+  getRecipesByUserId,
   updateRecipe,
 } from "./recipes.service";
 
@@ -14,6 +15,24 @@ export const getAllRecipesHandler = async (
 ) => {
   try {
     const recipes = await getAllRecipes();
+    return res.status(200).json({ recipes });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getRecipesByUserIdHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    console.log(id);
+    const recipes = await getRecipesByUserId  (Number(id));
+    if (recipes.length === 0) {
+      return res.status(404).json({ message: "Recipes not found" });
+    }
     return res.status(200).json({ recipes });
   } catch (error) {
     next(error);

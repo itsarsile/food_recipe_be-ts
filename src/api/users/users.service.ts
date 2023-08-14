@@ -10,7 +10,12 @@ import c from "config";
 export const excludedData = ["password"];
 
 export const getAllUsers = async () => {
-  return await db.select().from(user);
+  const results = await db.select({
+    id: user.id,
+    name: user.name,
+  }).from(user);
+
+  return results;
 };
 
 export const findUniqueUserByEmail = async (input: string) => {
@@ -26,13 +31,19 @@ export const signTokens = async (user: FindUser) => {
     EX: c.get<number>("redisCacheExpiresIn") * 60,
   });
 
-  const accessToken = signJwt({ sub: user.id }, {
-    expiresIn: `${c.get<number>("accessTokenExpiresIn")}m`,
-  });
+  const accessToken = signJwt(
+    { sub: user.id },
+    {
+      expiresIn: `${c.get<number>("accessTokenExpiresIn")}m`,
+    }
+  );
 
-  const refreshToken = signJwt({ sub: user.id }, {
-    expiresIn: `${c.get<number>("refreshTokenExpiresIn")}m`,
-  });
+  const refreshToken = signJwt(
+    { sub: user.id },
+    {
+      expiresIn: `${c.get<number>("refreshTokenExpiresIn")}m`,
+    }
+  );
 
   return { accessToken, refreshToken };
 };
