@@ -15,6 +15,12 @@ export const updateRecipe = async (input: Object, recipeId: number) => {
   return await db.update(recipe).set(input).where(eq(recipe.id, recipeId));
 };
 
+export const getRecipesByUserId = async (input: number) => {
+  const response = db.select().from(recipe).where(eq(recipe.authorId, input));
+  console.log(response);
+  return response;
+};
+
 export const getRecipeById = async (recipeId: number) => {
   return await db.select().from(recipe).where(eq(recipe.id, recipeId));
 };

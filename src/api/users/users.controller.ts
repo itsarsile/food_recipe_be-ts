@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { findUniqueUserByEmail, getAllUsers } from "./users.service";
-import { omit } from "lodash";
 
 export const getUsersHandler = async (
   req: Request,

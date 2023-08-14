@@ -89,6 +89,7 @@ export const loginHandler = async (
         status: "success",
         user: omit(user[0], "password"),
         accessToken,
+        refreshToken,
       });
     }
 
