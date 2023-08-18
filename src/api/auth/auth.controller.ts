@@ -105,27 +105,38 @@ export const refreshTokenHandler = async (
   next: NextFunction
 ) => {
   try {
-    const refreshToken = req.cookies.refreshToken;
+    const authorizationHeader = req.headers.authorization;
+
+    if (!authorizationHeader || !authorizationHeader.startsWith("Bearer")) {
+      return next("Invalid authorization header");
+    }
+    let refreshToken = authorizationHeader.split(" ")[1];
     const message = "Could not refresh token";
 
     if (!refreshToken) {
       return next(message);
     }
+
+    console.log("L:121", refreshToken);
     const decoded = verifyJwt<{ sub: string }>(refreshToken);
+    console.log("L:122", decoded);
 
     if (!decoded) {
+      console.log("L:125", message);
       return next(message);
     }
 
     const session = await redisClient.get(decoded.sub.toString());
 
     if (!session) {
+      console.log("L:132", message);
       return next(message);
     }
 
     const user = await findUniqueUserById(JSON.parse(session).id);
 
     if (!user) {
+      console.log("L:139", message);
       next(message);
     }
 
