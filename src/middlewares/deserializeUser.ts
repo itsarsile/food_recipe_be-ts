@@ -21,17 +21,17 @@ export const deserializeUser = async (
       accessToken = req.cookies.accessToken;
     }
 
-    console.log(accessToken);
-
     if (!accessToken) {
-      return next("You are not logged in");
+      return res.status(401).json({ message: "You're not logged in" });
     }
 
     // Validate the access token
     const decoded = verifyJwt<{ sub: string }>(accessToken);
     console.log(decoded);
     if (!decoded) {
-      return next(`Invalid token or user doesn't exist`);
+      return res
+        .status(401)
+        .json({ message: `Invalid token or user doesn't exist` });
     }
 
     // Check if the user has a valid session
