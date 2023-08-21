@@ -1,11 +1,11 @@
 import { pgTable, pgEnum, pgSchema, AnyPgColumn, varchar, timestamp, text, integer, uniqueIndex, serial, foreignKey } from "drizzle-orm/pg-core"
 
-export const keyStatus = pgEnum("key_status", ['expired', 'invalid', 'valid', 'default'])
-export const keyType = pgEnum("key_type", ['stream_xchacha20', 'secretstream', 'secretbox', 'kdf', 'generichash', 'shorthash', 'auth', 'hmacsha256', 'hmacsha512', 'aead-det', 'aead-ietf'])
-export const factorType = pgEnum("factor_type", ['webauthn', 'totp'])
-export const factorStatus = pgEnum("factor_status", ['verified', 'unverified'])
-export const aalLevel = pgEnum("aal_level", ['aal3', 'aal2', 'aal1'])
-export const codeChallengeMethod = pgEnum("code_challenge_method", ['plain', 's256'])
+export const keyStatus = pgEnum("key_status", ['default', 'valid', 'invalid', 'expired'])
+export const keyType = pgEnum("key_type", ['aead-ietf', 'aead-det', 'hmacsha512', 'hmacsha256', 'auth', 'shorthash', 'generichash', 'kdf', 'secretbox', 'secretstream', 'stream_xchacha20'])
+export const factorType = pgEnum("factor_type", ['totp', 'webauthn'])
+export const factorStatus = pgEnum("factor_status", ['unverified', 'verified'])
+export const aalLevel = pgEnum("aal_level", ['aal1', 'aal2', 'aal3'])
+export const codeChallengeMethod = pgEnum("code_challenge_method", ['s256', 'plain'])
 
 import { sql } from "drizzle-orm"
 
@@ -40,6 +40,7 @@ export const recipe = pgTable("Recipe", {
 	photo: text("photo"),
 	description: text("description"),
 	authorId: integer("authorId").notNull().references(() => user.id, { onDelete: "restrict", onUpdate: "cascade" } ),
+	video: text("video"),
 });
 
 export const comments = pgTable("Comments", {
@@ -47,6 +48,7 @@ export const comments = pgTable("Comments", {
 	text: text("text"),
 	recipeId: integer("recipeId").notNull().references(() => recipe.id, { onDelete: "restrict", onUpdate: "cascade" } ),
 	authorId: integer("authorId").notNull().references(() => user.id, { onDelete: "restrict", onUpdate: "cascade" } ),
+	createdAt: timestamp("createdAt", { precision: 3, mode: 'string' }).defaultNow().notNull(),
 });
 
 export const like = pgTable("Like", {

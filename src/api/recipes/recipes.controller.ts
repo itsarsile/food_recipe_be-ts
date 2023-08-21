@@ -29,7 +29,7 @@ export const getRecipesByUserIdHandler = async (
   try {
     const { id } = req.params;
     console.log(id);
-    const recipes = await getRecipesByUserId  (Number(id));
+    const recipes = await getRecipesByUserId(Number(id));
     if (recipes.length === 0) {
       return res.status(404).json({ message: "Recipes not found" });
     }
@@ -44,7 +44,7 @@ export const createRecipeHandler = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { title, description, photo } = req.body;
+  const { title, description, photo, video } = req.body;
 
   try {
     const authorId = res.locals.user.id;
@@ -52,6 +52,7 @@ export const createRecipeHandler = async (
       title,
       description,
       photo,
+      video,
       authorId,
     });
     return res.status(201).json({ newRecipe });
@@ -67,8 +68,8 @@ export const updateRecipeHandler = async (
 ) => {
   const { title, description, photo } = req.body;
   try {
+    console.log(description);
     const recipeId = req.params.id;
-    console.log(recipeId);
     const updatedRecipe = await updateRecipe(
       {
         title,
@@ -92,6 +93,7 @@ export const getRecipeByIdHandler = async (
   try {
     const recipeId = req.params.id;
     const recipe = await getRecipeById(Number(recipeId));
+    console.log(recipe);
     return res.status(200).json({ recipe });
   } catch (error) {
     next(error);

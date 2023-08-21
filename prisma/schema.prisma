@@ -17,7 +17,7 @@ model User {
   avatar   String?
   phone    String?
   password String
-  recipes  Recipe[]
+  recipes  Recipe[] 
   comments Comments[]
   saved    Save[]
   liked    Like[]
@@ -27,6 +27,7 @@ model Recipe {
   id          Int        @id @default(autoincrement())
   title       String?
   photo       String?
+  video String?
   description String?
   author      User       @relation(fields: [authorId], references: [id]) // Establishing the reverse relationship
   authorId    Int
